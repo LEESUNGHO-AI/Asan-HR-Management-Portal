@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아산시 스마트시티 인력 현황 대시보드</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+/* ============================================
+   아산시 스마트시티 인력 현황 대시보드
+   ============================================ */
+:root {
+    --primary: #667eea;
+    --primary-dark: #5a67d8;
+    --secondary: #764ba2;
+    --success: #48bb78;
+    --warning: #ed8936;
+    --danger: #f56565;
+    --info: #4299e1;
+    --jeil: #667eea;
+    --cni: #38b2ac;
+    --kaist: #9f7aea;
+    --hoseo: #ed8936;
+    --bg-primary: #0f0f23;
+    --bg-secondary: #1a1a2e;
+    --bg-tertiary: #16213e;
+    --bg-card: rgba(26, 26, 46, 0.8);
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --text-muted: #718096;
+    --border: rgba(255, 255, 255, 0.1);
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(ellipse at top left, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom right, rgba(118, 75, 162, 0.15) 0%, transparent 50%);
+}
+
+.header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: var(--space-lg) var(--space-xl);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+}
+
+.header-content {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.logo-section { display: flex; align-items: center; gap: var(--space-md); }
+.logo-icon svg { width: 48px; height: 48px; }
+
+.logo-text h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logo-text .subtitle { font-size: 0.875rem; color: var(--text-secondary); }
+.header-meta { display: flex; align-items: center; gap: var(--space-xl); }
+
+.sync-status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sync-status:hover { background: rgba(255, 255, 255, 0.1); }
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+}
+
+.last-update { text-align: right; }
+.last-update .label { display: block; font-size: 0.75rem; color: var(--text-muted); }
+.last-update .date { font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; }
+
+.dashboard {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+}
+
+.kpi-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-lg);
+}
+
+.kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-lg);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+
+.kpi-card.total::before { background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+.kpi-card.active::before { background: var(--success); }
+.kpi-card.inactive::before { background: var(--text-muted); }
+.kpi-card.rate::before { background: var(--warning); }
+
+.kpi-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+.kpi-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.kpi-card.total .kpi-icon { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+.kpi-card.active .kpi-icon { background: rgba(72, 187, 120, 0.2); color: var(--success); }
+.kpi-card.inactive .kpi-icon { background: rgba(113, 128, 150, 0.2); color: var(--text-muted); }
+.kpi-card.rate .kpi-icon { background: rgba(237, 137, 54, 0.2); color: var(--warning); }
+.kpi-icon svg { width: 28px; height: 28px; }
+.kpi-content { display: flex; flex-direction: column; }
+
+.kpi-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    line-height: 1;
+    letter-spacing: 0.02em;
+}
+
+.kpi-label { font-size: 1rem; font-weight: 600; margin-top: var(--space-xs); }
+.kpi-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.section-header h2, section > h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    position: relative;
+    padding-left: var(--space-md);
+}
+
+section > h2 { margin-bottom: var(--space-lg); }
+
+.section-header h2::before, section > h2::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(180deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+}
+
+.view-toggle {
+    display: flex;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: 4px;
+}
+
+.toggle-btn {
+    padding: var(--space-sm) var(--space-lg);
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.toggle-btn.active { background: var(--primary); color: white; }
+.toggle-btn:hover:not(.active) { color: var(--text-primary); }
+
+.org-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-lg);
+}
+
+.org-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.org-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.org-card.jeil { border-left: 4px solid var(--jeil); }
+.org-card.cni { border-left: 4px solid var(--cni); }
+.org-card.kaist { border-left: 4px solid var(--kaist); }
+.org-card.hoseo { border-left: 4px solid var(--hoseo); }
+
+.org-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-lg); }
+.org-icon { font-size: 1.5rem; }
+.org-header h3 { font-size: 1.1rem; font-weight: 600; }
+
+.stat-bar {
+    height: 8px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: var(--space-md);
+}
+
+.bar-fill {
+    height: 100%;
+    width: var(--fill-percent);
+    background: linear-gradient(90deg, var(--success), #68d391);
+    border-radius: 4px;
+    transition: width 1s ease;
+}
+
+.stat-numbers { display: flex; justify-content: space-around; }
+.stat-item { text-align: center; }
+.stat-item .num { display: block; font-family: 'Bebas Neue', sans-serif; font-size: 2rem; line-height: 1; }
+.stat-item .label { font-size: 0.75rem; color: var(--text-muted); }
+.stat-item.active .num { color: var(--success); }
+.stat-item.inactive .num { color: var(--text-muted); }
+
+.org-badge {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.org-warning {
+    position: absolute;
+    bottom: var(--space-md);
+    right: var(--space-md);
+    background: rgba(245, 101, 101, 0.2);
+    color: var(--danger);
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.data-table, .personnel-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.data-table th, .data-table td, .personnel-table th, .personnel-table td {
+    padding: var(--space-md) var(--space-lg);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.data-table th, .personnel-table th {
+    background: var(--bg-tertiary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.data-table tbody tr:hover, .personnel-table tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+.data-table tfoot { background: var(--bg-tertiary); }
+.text-green { color: var(--success); }
+.text-gray { color: var(--text-muted); }
+
+.org-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.org-tag.jeil { background: rgba(102, 126, 234, 0.2); color: var(--jeil); }
+.org-tag.cni { background: rgba(56, 178, 172, 0.2); color: var(--cni); }
+.org-tag.kaist { background: rgba(159, 122, 234, 0.2); color: var(--kaist); }
+.org-tag.hoseo { background: rgba(237, 137, 54, 0.2); color: var(--hoseo); }
+.hidden { display: none !important; }
+
+.distribution-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-lg);
+}
+
+.dist-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+}
+
+.dist-card.high { border-top: 4px solid var(--danger); }
+.dist-card.full { border-top: 4px solid var(--success); }
+.dist-card.low { border-top: 4px solid var(--warning); }
+
+.dist-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md); }
+.dist-icon { font-size: 1.5rem; }
+.dist-header h3 { font-size: 1.1rem; font-weight: 600; flex: 1; }
+
+.dist-range {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    background: var(--bg-tertiary);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.dist-count { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; margin-bottom: var(--space-md); }
+.dist-list { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+
+.person-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+}
+
+.person-chip small { font-size: 0.7rem; color: var(--text-muted); }
+.person-chip.core { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+.person-chip.hoseo { border: 1px solid var(--hoseo); }
+.person-chip.new { background: rgba(72, 187, 120, 0.2); border: 1px solid var(--success); }
+.person-chip.warning { background: rgba(245, 101, 101, 0.2); border: 1px solid var(--danger); }
+
+.filter-controls { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+
+.filter-select, .search-input {
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    min-width: 150px;
+}
+
+.filter-select:focus, .search-input:focus { outline: none; border-color: var(--primary); }
+.personnel-table-wrapper { overflow-x: auto; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-badge.active { background: rgba(72, 187, 120, 0.2); color: var(--success); }
+.status-badge.inactive { background: rgba(113, 128, 150, 0.2); color: var(--text-muted); }
+
+.role-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    margin-left: 4px;
+}
+
+.new-personnel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-md);
+}
+
+.new-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.new-card::before { content: '🆕'; position: absolute; top: -10px; right: -10px; font-size: 3rem; opacity: 0.1; }
+.new-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.new-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm); }
+.new-date { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--text-muted); }
+
+.new-org {
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.new-org.jeil { background: rgba(102, 126, 234, 0.2); color: var(--jeil); }
+.new-org.cni { background: rgba(56, 178, 172, 0.2); color: var(--cni); }
+.new-org.kaist { background: rgba(159, 122, 234, 0.2); color: var(--kaist); }
+.new-org.hoseo { background: rgba(237, 137, 54, 0.2); color: var(--hoseo); }
+.new-name { font-size: 1.2rem; font-weight: 600; margin-bottom: var(--space-xs); }
+.new-rate { font-size: 0.85rem; color: var(--text-secondary); }
+
+.risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-lg);
+}
+
+.risk-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.risk-header { padding: var(--space-md) var(--space-lg); display: flex; align-items: center; gap: var(--space-sm); }
+.risk-card.danger .risk-header { background: rgba(245, 101, 101, 0.2); }
+.risk-card.warning .risk-header { background: rgba(237, 137, 54, 0.2); }
+.risk-card.success .risk-header { background: rgba(72, 187, 120, 0.2); }
+.risk-icon { font-size: 1.2rem; }
+.risk-header h3 { font-size: 1rem; font-weight: 600; }
+.risk-content { padding: var(--space-lg); }
+.risk-content h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-secondary); }
+.risk-content ul { list-style: none; margin-bottom: var(--space-md); }
+.risk-content li { padding: var(--space-xs) 0; padding-left: var(--space-md); position: relative; font-size: 0.9rem; }
+.risk-content li::before { content: '•'; position: absolute; left: 0; color: var(--text-muted); }
+
+.risk-action {
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+}
+
+.risk-card.danger .risk-action { color: var(--danger); }
+.risk-card.warning .risk-action { color: var(--warning); }
+.risk-card.success .risk-action { color: var(--success); }
+
+.links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-md);
+}
+
+.link-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.link-card:hover { border-color: var(--primary); transform: translateX(4px); }
+.link-icon { font-size: 1.5rem; }
+.link-title { flex: 1; font-weight: 500; }
+.link-arrow { color: var(--primary); font-size: 1.2rem; transition: transform 0.3s ease; }
+.link-card:hover .link-arrow { transform: translateX(4px); }
+
+.footer {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    padding: var(--space-xl);
+    margin-top: var(--space-2xl);
+}
+
+.footer-content {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+}
+
+.footer-info p { font-size: 0.875rem; color: var(--text-secondary); margin-bottom: var(--space-xs); }
+.footer-logo { display: flex; align-items: center; gap: var(--space-sm); color: var(--text-muted); font-size: 0.875rem; }
+.notion-logo { width: 24px; height: 24px; filter: grayscale(100%) brightness(0.8); }
+
+.rate-cell { display: flex; flex-direction: column; gap: 4px; }
+.rate-value { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+.rate-value.rate-high { color: var(--success); }
+.rate-value.rate-mid { color: var(--primary); }
+.rate-value.rate-low { color: var(--warning); }
+.rate-value.rate-critical { color: var(--danger); }
+
+.rate-bar {
+    height: 4px;
+    background: var(--bg-tertiary);
+    border-radius: 2px;
+    overflow: hidden;
+    width: 80px;
+}
+
+.rate-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+    .header-content { flex-direction: column; align-items: flex-start; }
+    .header-meta { width: 100%; justify-content: space-between; }
+    .dashboard { padding: var(--space-md); }
+    .kpi-value { font-size: 2.5rem; }
+    .section-header { flex-direction: column; align-items: flex-start; }
+    .filter-controls { width: 100%; }
+    .filter-select, .search-input { flex: 1; min-width: 0; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.kpi-card, .org-card, .dist-card, .new-card, .risk-card, .link-card { animation: fadeIn 0.5s ease backwards; }
+.kpi-card:nth-child(1) { animation-delay: 0.1s; }
+.kpi-card:nth-child(2) { animation-delay: 0.2s; }
+.kpi-card:nth-child(3) { animation-delay: 0.3s; }
+.kpi-card:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 40 40" fill="none">
+                        <rect width="40" height="40" rx="8" fill="url(#grad1)"/>
+                        <path d="M12 28V12h4l4 10 4-10h4v16h-3V18l-3.5 10h-3L15 18v10h-3z" fill="white"/>
+                        <defs>
+                            <linearGradient id="grad1" x1="0" y1="0" x2="40" y2="40">
+                                <stop offset="0%" stop-color="#667eea"/>
+                                <stop offset="100%" stop-color="#764ba2"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>아산시 강소형 스마트시티</h1>
+                    <span class="subtitle">컨소시엄 인력 현황 대시보드</span>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div class="sync-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Notion 연동됨</span>
+                </div>
+                <div class="last-update">
+                    <span class="label">데이터 기준</span>
+                    <span class="date">2025년 10월</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <!-- KPI Cards -->
+        <section class="kpi-section">
+            <div class="kpi-card total">
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">53</span>
+                    <span class="kpi-label">총 등록 인력</span>
+                    <span class="kpi-sub">4개 컨소시엄 기관</span>
+                </div>
+            </div>
+            <div class="kpi-card active">
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22,4 12,14.01 9,11.01"/>
+                    </svg>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">34</span>
+                    <span class="kpi-label">활성 인력</span>
+                    <span class="kpi-sub">현재 프로젝트 참여 중</span>
+                </div>
+            </div>
+            <div class="kpi-card inactive">
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">19</span>
+                    <span class="kpi-label">비활성 인력</span>
+                    <span class="kpi-sub">참여 종료/이탈</span>
+                </div>
+            </div>
+            <div class="kpi-card rate">
+                <div class="kpi-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                </div>
+                <div class="kpi-content">
+                    <span class="kpi-value">64.2%</span>
+                    <span class="kpi-label">활성 비율</span>
+                    <span class="kpi-sub">전체 대비</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Organization Stats -->
+        <section class="org-section">
+            <div class="section-header">
+                <h2>기관별 인력 현황</h2>
+            </div>
+            <div class="org-cards">
+                <div class="org-card jeil">
+                    <div class="org-header">
+                        <span class="org-icon">🏢</span>
+                        <h3>제일엔지니어링</h3>
+                    </div>
+                    <div class="org-stats">
+                        <div class="stat-bar"><div class="bar-fill" style="--fill-percent: 68%"></div></div>
+                        <div class="stat-numbers">
+                            <div class="stat-item"><span class="num">25</span><span class="label">총원</span></div>
+                            <div class="stat-item active"><span class="num">17</span><span class="label">활성</span></div>
+                            <div class="stat-item inactive"><span class="num">8</span><span class="label">비활성</span></div>
+                        </div>
+                    </div>
+                    <div class="org-badge">주관기관</div>
+                </div>
+                <div class="org-card cni">
+                    <div class="org-header">
+                        <span class="org-icon">🏛️</span>
+                        <h3>충남연구원</h3>
+                    </div>
+                    <div class="org-stats">
+                        <div class="stat-bar"><div class="bar-fill" style="--fill-percent: 83.3%"></div></div>
+                        <div class="stat-numbers">
+                            <div class="stat-item"><span class="num">6</span><span class="label">총원</span></div>
+                            <div class="stat-item active"><span class="num">5</span><span class="label">활성</span></div>
+                            <div class="stat-item inactive"><span class="num">1</span><span class="label">비활성</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="org-card kaist">
+                    <div class="org-header">
+                        <span class="org-icon">🎓</span>
+                        <h3>한국과학기술원</h3>
+                    </div>
+                    <div class="org-stats">
+                        <div class="stat-bar"><div class="bar-fill" style="--fill-percent: 66.7%"></div></div>
+                        <div class="stat-numbers">
+                            <div class="stat-item"><span class="num">6</span><span class="label">총원</span></div>
+                            <div class="stat-item active"><span class="num">4</span><span class="label">활성</span></div>
+                            <div class="stat-item inactive"><span class="num">2</span><span class="label">비활성</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="org-card hoseo">
+                    <div class="org-header">
+                        <span class="org-icon">🏫</span>
+                        <h3>호서대학교</h3>
+                    </div>
+                    <div class="org-stats">
+                        <div class="stat-bar"><div class="bar-fill" style="--fill-percent: 50%"></div></div>
+                        <div class="stat-numbers">
+                            <div class="stat-item"><span class="num">16</span><span class="label">총원</span></div>
+                            <div class="stat-item active"><span class="num">8</span><span class="label">활성</span></div>
+                            <div class="stat-item inactive"><span class="num">8</span><span class="label">비활성</span></div>
+                        </div>
+                    </div>
+                    <div class="org-warning">⚠️ 이탈률 50%</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Personnel Distribution -->
+        <section class="distribution-section">
+            <h2>참여율별 인력 분포</h2>
+            <div class="distribution-grid">
+                <div class="dist-card high">
+                    <div class="dist-header">
+                        <span class="dist-icon">🔥</span>
+                        <h3>고참여율</h3>
+                        <span class="dist-range">90% 이상</span>
+                    </div>
+                    <div class="dist-count">12명</div>
+                    <div class="dist-list">
+                        <div class="person-chip core">이성호 <small>PM</small></div>
+                        <div class="person-chip core">임혁 <small>PL</small></div>
+                        <div class="person-chip">김주용</div>
+                        <div class="person-chip">이태복 <small>95%</small></div>
+                        <div class="person-chip">함정영 <small>95%</small></div>
+                        <div class="person-chip">강문석</div>
+                        <div class="person-chip">문상훈</div>
+                        <div class="person-chip">양규빈</div>
+                        <div class="person-chip">이규진</div>
+                        <div class="person-chip">최철호</div>
+                    </div>
+                </div>
+                <div class="dist-card full">
+                    <div class="dist-header">
+                        <span class="dist-icon">⭐</span>
+                        <h3>전임투입</h3>
+                        <span class="dist-range">100%</span>
+                    </div>
+                    <div class="dist-count">7명</div>
+                    <div class="dist-list">
+                        <div class="person-chip hoseo">전유식</div>
+                        <div class="person-chip hoseo">이창오</div>
+                        <div class="person-chip hoseo">심재훈</div>
+                        <div class="person-chip hoseo">이휘상</div>
+                        <div class="person-chip hoseo new">김한솔 <small>신규</small></div>
+                        <div class="person-chip hoseo new">김기강 <small>신규</small></div>
+                        <div class="person-chip hoseo new">민혜홍 <small>신규</small></div>
+                    </div>
+                </div>
+                <div class="dist-card low">
+                    <div class="dist-header">
+                        <span class="dist-icon">⚠️</span>
+                        <h3>저참여율</h3>
+                        <span class="dist-range">30% 이하</span>
+                    </div>
+                    <div class="dist-count">9명</div>
+                    <div class="dist-list">
+                        <div class="person-chip warning">전동욱 <small>10%</small></div>
+                        <div class="person-chip warning">최규태 <small>10%</small></div>
+                        <div class="person-chip">김대영 <small>15.9%</small></div>
+                        <div class="person-chip">임준홍 <small>23.5%</small></div>
+                        <div class="person-chip">김강현 <small>25.4%</small></div>
+                        <div class="person-chip">홍은일 <small>30%</small></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Personnel Table -->
+        <section class="personnel-section">
+            <div class="section-header">
+                <h2>인력 상세 현황</h2>
+                <div class="filter-controls">
+                    <select id="orgFilter" class="filter-select">
+                        <option value="all">전체 기관</option>
+                        <option value="jeil">제일엔지니어링</option>
+                        <option value="cni">충남연구원</option>
+                        <option value="kaist">KAIST</option>
+                        <option value="hoseo">호서대학교</option>
+                    </select>
+                    <select id="statusFilter" class="filter-select">
+                        <option value="all">전체 상태</option>
+                        <option value="active">활성</option>
+                        <option value="inactive">비활성</option>
+                    </select>
+                    <input type="text" id="searchInput" class="search-input" placeholder="이름 검색...">
+                </div>
+            </div>
+            <div class="personnel-table-wrapper">
+                <table class="personnel-table" id="personnelTable">
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>소속</th>
+                            <th>참여율</th>
+                            <th>참여기간</th>
+                            <th>역할</th>
+                            <th>상태</th>
+                            <th>비고</th>
+                        </tr>
+                    </thead>
+                    <tbody id="personnelTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- New Personnel -->
+        <section class="new-personnel-section">
+            <h2>🆕 2025년 신규 투입 인력</h2>
+            <div class="new-personnel-grid">
+                <div class="new-card">
+                    <div class="new-header"><span class="new-date">2024.12</span><span class="new-org jeil">제일엔지니어링</span></div>
+                    <div class="new-name">안성순</div><div class="new-rate">참여율 60%</div>
+                </div>
+                <div class="new-card">
+                    <div class="new-header"><span class="new-date">2025.03</span><span class="new-org kaist">KAIST</span></div>
+                    <div class="new-name">박건우</div><div class="new-rate">참여율 40%</div>
+                </div>
+                <div class="new-card">
+                    <div class="new-header"><span class="new-date">2025.03</span><span class="new-org hoseo">호서대학교</span></div>
+                    <div class="new-name">김기현</div><div class="new-rate">참여율 50%</div>
+                </div>
+                <div class="new-card">
+                    <div class="new-header"><span class="new-date">2025.04</span><span class="new-org hoseo">호서대학교</span></div>
+                    <div class="new-name">김한솔</div><div class="new-rate">참여율 100%</div>
+                </div>
+                <div class="new-card">
+                    <div class="new-header"><span class="new-date">2025.04</span><span class="new-org hoseo">호서대학교</span></div>
+                    <div class="new-name">김기강</div><div class="new-rate">참여율 100%</div>
+                </div>
+                <div class="new-card">
+                    <div class="new-header"><span class="new-date">2025.08</span><span class="new-org cni">충남연구원</span></div>
+                    <div class="new-name">한석호</div><div class="new-rate">참여율 32.3%</div>
+                </div>
+                <div class="new-card">
+                    <div class="new-header"><span class="new-date">2025.08</span><span class="new-org kaist">KAIST</span></div>
+                    <div class="new-name">연분홍</div><div class="new-rate">참여율 40%</div>
+                </div>
+                <div class="new-card">
+                    <div class="new-header"><span class="new-date">2025.09</span><span class="new-org hoseo">호서대학교</span></div>
+                    <div class="new-name">민혜홍</div><div class="new-rate">참여율 100%</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Risk Section -->
+        <section class="risk-section">
+            <h2>⚠️ 리스크 및 관리 포인트</h2>
+            <div class="risk-grid">
+                <div class="risk-card danger">
+                    <div class="risk-header"><span class="risk-icon">🚨</span><h3>주의 필요</h3></div>
+                    <div class="risk-content">
+                        <h4>저참여율 인력 (10%)</h4>
+                        <ul><li>전동욱 (10%)</li><li>최규태 (10%)</li></ul>
+                        <p class="risk-action">→ 역할 재정의 검토 필요</p>
+                    </div>
+                </div>
+                <div class="risk-card warning">
+                    <div class="risk-header"><span class="risk-icon">📌</span><h3>모니터링 필요</h3></div>
+                    <div class="risk-content">
+                        <h4>호서대학교 인력 변동성</h4>
+                        <ul><li>인력 이탈률: 50%</li><li>학기 기반 참여 패턴</li></ul>
+                        <p class="risk-action">→ 지식 전수 관리 필요</p>
+                    </div>
+                </div>
+                <div class="risk-card success">
+                    <div class="risk-header"><span class="risk-icon">✅</span><h3>강점</h3></div>
+                    <div class="risk-content">
+                        <h4>핵심 인력 안정성</h4>
+                        <ul><li>PM/PL 상주 유지</li><li>고참여율 인력 12명 확보</li></ul>
+                        <p class="risk-action">→ 사업 연속성 보장</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Links -->
+        <section class="links-section">
+            <h2>🔗 관련 시스템</h2>
+            <div class="links-grid">
+                <a href="https://www.notion.so/9c1ed45b01214d208c786b2bce4bf210" target="_blank" class="link-card">
+                    <span class="link-icon">📋</span><span class="link-title">인력 관리 DB</span><span class="link-arrow">→</span>
+                </a>
+                <a href="https://www.notion.so/2aa50aa9577d8128b6d4c5c21d845796" target="_blank" class="link-card">
+                    <span class="link-icon">💰</span><span class="link-title">예산관리 시스템</span><span class="link-arrow">→</span>
+                </a>
+                <a href="https://www.notion.so/2aa50aa9577d81ae817bdd8032715fd4" target="_blank" class="link-card">
+                    <span class="link-icon">📊</span><span class="link-title">프로젝트 관리</span><span class="link-arrow">→</span>
+                </a>
+                <a href="https://www.notion.so/29c50aa9577d8138b826d66a6a473757" target="_blank" class="link-card">
+                    <span class="link-icon">🏷️</span><span class="link-title">자산관리 대시보드</span><span class="link-arrow">→</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <p>📅 최종 업데이트: 2025-11-27</p>
+                <p>📊 데이터 소스: Slack #아산시-참여인력</p>
+                <p>✉️ 문의: smartcity-pmo@cheileng.com</p>
+            </div>
+            <div class="footer-logo">
+                <span>Powered by Notion</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+    // Personnel Data
+    const PERSONNEL_DATA = {
+        organizations: {
+            jeil: { id: 'jeil', name: '제일엔지니어링종합건축사사무소', shortName: '제일엔지니어링', color: '#667eea' },
+            cni: { id: 'cni', name: '충남연구원', shortName: '충남연구원', color: '#38b2ac' },
+            kaist: { id: 'kaist', name: '한국과학기술원', shortName: 'KAIST', color: '#9f7aea' },
+            hoseo: { id: 'hoseo', name: '호서대학교 산학협력단', shortName: '호서대학교', color: '#ed8936' }
+        },
+        personnel: [
+            { name: '이성호', org: 'jeil', rate: 90, status: 'active', startDate: '2023-12', endDate: '2025-12', role: 'PM', note: '사업총괄(PM)' },
+            { name: '임혁', org: 'jeil', rate: 90, status: 'active', startDate: '2023-12', endDate: '2025-12', role: 'PL', note: '사업리더(PL)' },
+            { name: '김주용', org: 'jeil', rate: 90, status: 'active', startDate: '2023-12', endDate: '2025-12', role: '', note: '사업관리' },
+            { name: '이태복', org: 'jeil', rate: 95, status: 'active', startDate: '2024-03', endDate: '2025-12', role: '', note: 'E계약' },
+            { name: '함정영', org: 'jeil', rate: 95, status: 'active', startDate: '2024-02', endDate: '2025-12', role: '', note: 'E계약' },
+            { name: '강문석', org: 'jeil', rate: 90, status: 'active', startDate: '2023-12', endDate: '2025-12', role: '', note: '' },
+            { name: '문상훈', org: 'jeil', rate: 90, status: 'active', startDate: '2024-03', endDate: '2025-12', role: '', note: '' },
+            { name: '양규빈', org: 'jeil', rate: 90, status: 'active', startDate: '2023-12', endDate: '2025-12', role: '', note: '' },
+            { name: '이규진', org: 'jeil', rate: 90, status: 'active', startDate: '2024-04', endDate: '2025-12', role: '', note: '' },
+            { name: '최철호', org: 'jeil', rate: 90, status: 'active', startDate: '2023-12', endDate: '2025-12', role: '', note: '' },
+            { name: '정지원', org: 'jeil', rate: 80, status: 'active', startDate: '2023-12', endDate: '2025-12', role: '', note: '' },
+            { name: '권주현', org: 'jeil', rate: 70, status: 'active', startDate: '2023-12', endDate: '2025-12', role: '', note: '' },
+            { name: '박정민', org: 'jeil', rate: 70, status: 'active', startDate: '2023-12', endDate: '2025-12', role: '', note: '' },
+            { name: '왕성환', org: 'jeil', rate: 70, status: 'active', startDate: '2023-12', endDate: '2025-12', role: '', note: '' },
+            { name: '안성순', org: 'jeil', rate: 60, status: 'active', startDate: '2024-12', endDate: '2025-12', role: '', note: '신규' },
+            { name: '전동욱', org: 'jeil', rate: 10, status: 'active', startDate: '2023-12', endDate: '2025-12', role: '', note: '저참여' },
+            { name: '최규태', org: 'jeil', rate: 10, status: 'active', startDate: '2023-12', endDate: '2025-12', role: '', note: '저참여' },
+            { name: '구본상', org: 'jeil', rate: 0, status: 'inactive', startDate: '2023-12', endDate: '2024-01', role: '', note: '종료' },
+            { name: '김동혁', org: 'jeil', rate: 0, status: 'inactive', startDate: '2023-12', endDate: '2024-01', role: '', note: '종료' },
+            { name: '김지웅', org: 'jeil', rate: 0, status: 'inactive', startDate: '2023-12', endDate: '2024-10', role: '', note: '종료' },
+            { name: '문현아', org: 'jeil', rate: 0, status: 'inactive', startDate: '2023-12', endDate: '2024-01', role: '', note: '종료' },
+            { name: '이관주', org: 'jeil', rate: 0, status: 'inactive', startDate: '2023-12', endDate: '2024-01', role: '', note: '종료' },
+            { name: '이준옥', org: 'jeil', rate: 0, status: 'inactive', startDate: '2023-12', endDate: '2024-02', role: '', note: '종료' },
+            { name: '정지운', org: 'jeil', rate: 0, status: 'inactive', startDate: '2023-12', endDate: '2024-11', role: '', note: '종료' },
+            { name: '최성원', org: 'jeil', rate: 0, status: 'inactive', startDate: '2023-12', endDate: '2024-01', role: '', note: '종료' },
+            { name: '박춘섭', org: 'cni', rate: 43.3, status: 'active', startDate: '2024-01', endDate: '2025-12', role: '', note: '' },
+            { name: '한석호', org: 'cni', rate: 32.3, status: 'active', startDate: '2025-08', endDate: '2025-12', role: '', note: '신규' },
+            { name: '홍은일', org: 'cni', rate: 30, status: 'active', startDate: '2024-01', endDate: '2025-12', role: '', note: '' },
+            { name: '김강현', org: 'cni', rate: 25.4, status: 'active', startDate: '2024-01', endDate: '2025-12', role: '', note: '' },
+            { name: '임준홍', org: 'cni', rate: 23.5, status: 'active', startDate: '2024-01', endDate: '2025-12', role: '', note: '' },
+            { name: '최정현', org: 'cni', rate: 0, status: 'inactive', startDate: '2024-01', endDate: '2025-07', role: '', note: '종료' },
+            { name: '이영종', org: 'kaist', rate: 40, status: 'active', startDate: '2024-05', endDate: '2025-12', role: '', note: '' },
+            { name: '박건우', org: 'kaist', rate: 40, status: 'active', startDate: '2025-03', endDate: '2025-12', role: '', note: '신규' },
+            { name: '연분홍', org: 'kaist', rate: 40, status: 'active', startDate: '2025-08', endDate: '2025-12', role: '', note: '신규' },
+            { name: '김대영', org: 'kaist', rate: 15.9, status: 'active', startDate: '2024-01', endDate: '2025-12', role: '', note: '' },
+            { name: 'Tolcha Yalew Kidane', org: 'kaist', rate: 0, status: 'inactive', startDate: '2024-01', endDate: '2025-05', role: '', note: '종료' },
+            { name: '황선영', org: 'kaist', rate: 0, status: 'inactive', startDate: '2024-01', endDate: '2025-07', role: '', note: '종료' },
+            { name: '전유식', org: 'hoseo', rate: 100, status: 'active', startDate: '2024-06', endDate: '2025-12', role: '', note: '전임' },
+            { name: '이창오', org: 'hoseo', rate: 100, status: 'active', startDate: '2024-07', endDate: '2025-12', role: '', note: '전임' },
+            { name: '심재훈', org: 'hoseo', rate: 100, status: 'active', startDate: '2024-08', endDate: '2025-12', role: '', note: '전임' },
+            { name: '이휘상', org: 'hoseo', rate: 100, status: 'active', startDate: '2024-10', endDate: '2025-12', role: '', note: '전임' },
+            { name: '김한솔', org: 'hoseo', rate: 100, status: 'active', startDate: '2025-04', endDate: '2025-12', role: '', note: '신규' },
+            { name: '김기강', org: 'hoseo', rate: 100, status: 'active', startDate: '2025-04', endDate: '2025-12', role: '', note: '신규' },
+            { name: '민혜홍', org: 'hoseo', rate: 100, status: 'active', startDate: '2025-09', endDate: '2025-12', role: '', note: '신규' },
+            { name: '김기현', org: 'hoseo', rate: 50, status: 'active', startDate: '2025-03', endDate: '2025-12', role: '', note: '신규' },
+            { name: '신승중', org: 'hoseo', rate: 0, status: 'inactive', startDate: '2024-01', endDate: '2025-02', role: '', note: '종료' },
+            { name: '심민아', org: 'hoseo', rate: 0, status: 'inactive', startDate: '2024-03', endDate: '2024-08', role: '', note: '종료' },
+            { name: '김태군', org: 'hoseo', rate: 0, status: 'inactive', startDate: '2024-03', endDate: '2024-08', role: '', note: '종료' },
+            { name: '양소영', org: 'hoseo', rate: 0, status: 'inactive', startDate: '2024-01', endDate: '2025-04', role: '', note: '종료' },
+            { name: '김종철', org: 'hoseo', rate: 0, status: 'inactive', startDate: '2024-03', endDate: '2024-12', role: '', note: '종료' },
+            { name: '차승용', org: 'hoseo', rate: 0, status: 'inactive', startDate: '2024-07', endDate: '2024-10', role: '', note: '종료' },
+            { name: '정화민', org: 'hoseo', rate: 0, status: 'inactive', startDate: '2024-07', endDate: '2025-08', role: '', note: '종료' },
+            { name: '박성호', org: 'hoseo', rate: 0, status: 'inactive', startDate: '2024-01', endDate: '2025-03', role: '', note: '종료' }
+        ]
+    };
+
+    // App
+    const App = {
+        filters: { org: 'all', status: 'all', search: '' },
+        
+        init() {
+            this.bindEvents();
+            this.renderPersonnelTable();
+        },
+        
+        bindEvents() {
+            document.getElementById('orgFilter')?.addEventListener('change', e => {
+                this.filters.org = e.target.value;
+                this.renderPersonnelTable();
+            });
+            document.getElementById('statusFilter')?.addEventListener('change', e => {
+                this.filters.status = e.target.value;
+                this.renderPersonnelTable();
+            });
+            document.getElementById('searchInput')?.addEventListener('input', e => {
+                this.filters.search = e.target.value.toLowerCase();
+                this.renderPersonnelTable();
+            });
+        },
+        
+        renderPersonnelTable() {
+            const tbody = document.getElementById('personnelTableBody');
+            if (!tbody) return;
+            
+            const filtered = PERSONNEL_DATA.personnel.filter(p => {
+                if (this.filters.org !== 'all' && p.org !== this.filters.org) return false;
+                if (this.filters.status !== 'all' && p.status !== this.filters.status) return false;
+                if (this.filters.search && !p.name.toLowerCase().includes(this.filters.search)) return false;
+                return true;
+            }).sort((a, b) => {
+                const order = ['jeil', 'cni', 'kaist', 'hoseo'];
+                if (a.org !== b.org) return order.indexOf(a.org) - order.indexOf(b.org);
+                return b.rate - a.rate;
+            });
+            
+            tbody.innerHTML = filtered.map(p => `
+                <tr>
+                    <td><strong>${p.name}</strong>${p.role ? `<span class="role-badge">${p.role}</span>` : ''}</td>
+                    <td><span class="org-tag ${p.org}">${PERSONNEL_DATA.organizations[p.org].shortName}</span></td>
+                    <td><div class="rate-cell">
+                        <span class="rate-value ${p.rate >= 90 ? 'rate-high' : p.rate >= 50 ? 'rate-mid' : p.rate >= 30 ? 'rate-low' : 'rate-critical'}">${p.rate}%</span>
+                        <div class="rate-bar"><div class="rate-fill" style="width:${p.rate}%"></div></div>
+                    </div></td>
+                    <td>${p.startDate.replace('-', '.')} ~ ${p.endDate.replace('-', '.')}</td>
+                    <td>${p.role || '-'}</td>
+                    <td><span class="status-badge ${p.status}">${p.status === 'active' ? '활성' : '비활성'}</span></td>
+                    <td>${p.note || '-'}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text-muted);">검색 결과가 없습니다.</td></tr>';
+        }
+    };
+    
+    document.addEventListener('DOMContentLoaded', () => App.init());
+    </script>
+</body>
+</html>
