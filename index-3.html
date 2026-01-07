@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아산시 강소형 스마트시티 | 인력관리 대시보드 (2026-01)</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.1/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #00D4FF;
+            --secondary: #7B2DFF;
+            --accent: #FF6B35;
+            --success: #00FF88;
+            --warning: #FFD93D;
+            --danger: #FF3366;
+            --dark-bg: #0A0E17;
+            --dark-card: #121A2D;
+            --dark-border: #1E2A45;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8B9CC7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Background */
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(123, 45, 255, 0.1) 0%, transparent 50%),
+                var(--dark-bg);
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(180deg, rgba(18, 26, 45, 0.98) 0%, rgba(10, 14, 23, 0.95) 100%);
+            border-bottom: 1px solid var(--dark-border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .dday-box {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.2), rgba(255, 107, 53, 0.2));
+            border: 1px solid var(--danger);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            text-align: center;
+        }
+
+        .dday-label { font-size: 0.75rem; color: var(--text-secondary); }
+        .dday-value { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; color: var(--danger); font-weight: 700; }
+
+        .update-info {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+
+        .stat-card.primary::before { background: var(--primary); }
+        .stat-card.success::before { background: var(--success); }
+        .stat-card.warning::before { background: var(--warning); }
+        .stat-card.danger::before { background: var(--danger); }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 45px; height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .stat-card.primary .stat-icon { background: rgba(0, 212, 255, 0.2); color: var(--primary); }
+        .stat-card.success .stat-icon { background: rgba(0, 255, 136, 0.2); color: var(--success); }
+        .stat-card.warning .stat-icon { background: rgba(255, 217, 61, 0.2); color: var(--warning); }
+        .stat-card.danger .stat-icon { background: rgba(255, 51, 102, 0.2); color: var(--danger); }
+
+        .stat-title { font-size: 0.9rem; color: var(--text-secondary); }
+        .stat-value { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; font-weight: 700; }
+        .stat-card.primary .stat-value { color: var(--primary); }
+        .stat-card.success .stat-value { color: var(--success); }
+        .stat-card.warning .stat-value { color: var(--warning); }
+        .stat-card.danger .stat-value { color: var(--danger); }
+
+        .stat-sub { font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem; }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-title i { color: var(--primary); }
+
+        /* Institution Table */
+        .institution-table {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .table-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-title i { color: var(--primary); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        td { font-size: 0.9rem; }
+
+        tr:hover { background: rgba(0, 212, 255, 0.05); }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.active { background: rgba(0, 255, 136, 0.2); color: var(--success); }
+        .badge.inactive { background: rgba(139, 156, 199, 0.2); color: var(--text-secondary); }
+
+        /* Role Cards Section */
+        .roles-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i { color: var(--secondary); }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1rem;
+        }
+
+        .role-category {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .category-icon {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .category-name { font-weight: 600; font-size: 1rem; }
+        .category-count { 
+            margin-left: auto;
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--primary);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .role-list { list-style: none; }
+
+        .role-item {
+            display: flex;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(30, 42, 69, 0.5);
+            font-size: 0.85rem;
+        }
+
+        .role-item:last-child { border-bottom: none; }
+
+        .role-name { flex: 1; color: var(--text-primary); }
+        .role-eng { color: var(--text-secondary); font-size: 0.75rem; margin-left: 0.5rem; }
+        .role-person { color: var(--primary); font-weight: 500; }
+        .role-rate { 
+            margin-left: 0.5rem;
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--success);
+            padding: 0.15rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+        }
+
+        /* Risk Section */
+        .risk-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .risk-card {
+            background: var(--dark-card);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border-left: 4px solid;
+        }
+
+        .risk-card.danger { border-color: var(--danger); background: rgba(255, 51, 102, 0.05); }
+        .risk-card.warning { border-color: var(--warning); background: rgba(255, 217, 61, 0.05); }
+        .risk-card.success { border-color: var(--success); background: rgba(0, 255, 136, 0.05); }
+
+        .risk-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .risk-icon { font-size: 1.2rem; }
+        .risk-card.danger .risk-icon { color: var(--danger); }
+        .risk-card.warning .risk-icon { color: var(--warning); }
+        .risk-card.success .risk-icon { color: var(--success); }
+
+        .risk-title { font-weight: 600; font-size: 0.95rem; }
+        .risk-content { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--dark-border);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .footer a { color: var(--primary); text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .charts-section { grid-template-columns: 1fr; }
+            .risk-section { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; gap: 1rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .roles-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon"><i class="ri-building-4-fill"></i></div>
+                <div class="logo-text">
+                    <h1>아산시 강소형 스마트시티 구축사업</h1>
+                    <p>인력관리 대시보드 v2026-01</p>
+                </div>
+            </div>
+            <div class="header-info">
+                <div class="dday-box">
+                    <div class="dday-label">사업 종료까지</div>
+                    <div class="dday-value" id="dday">D-359</div>
+                </div>
+                <div class="update-info">
+                    <div>데이터 기준: 2026년 1월</div>
+                    <div id="updateTime">최종 업데이트: 2026-01-07</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Stats Cards -->
+        <section class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="ri-team-fill"></i></div>
+                    <div class="stat-title">총 등록 인력</div>
+                </div>
+                <div class="stat-value">54</div>
+                <div class="stat-sub">4개 기관 (28개 역할)</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="ri-user-star-fill"></i></div>
+                    <div class="stat-title">현재 활성 인력</div>
+                </div>
+                <div class="stat-value">25</div>
+                <div class="stat-sub">활성비율 46.3%</div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="ri-user-unfollow-fill"></i></div>
+                    <div class="stat-title">비활성/종료</div>
+                </div>
+                <div class="stat-value">29</div>
+                <div class="stat-sub">투입 종료 인력</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="stat-header">
+                    <div class="stat-icon"><i class="ri-checkbox-circle-fill"></i></div>
+                    <div class="stat-title">역할 분류</div>
+                </div>
+                <div class="stat-value">12</div>
+                <div class="stat-sub">분류별 역할 구성</div>
+            </div>
+        </section>
+
+        <!-- Charts -->
+        <section class="charts-section">
+            <div class="chart-card">
+                <div class="chart-title"><i class="ri-pie-chart-fill"></i> 기관별 인력 분포</div>
+                <canvas id="institutionChart" height="250"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title"><i class="ri-bar-chart-fill"></i> 분류별 역할 현황</div>
+                <canvas id="categoryChart" height="250"></canvas>
+            </div>
+        </section>
+
+        <!-- Institution Table -->
+        <section class="institution-table">
+            <div class="table-title"><i class="ri-building-2-fill"></i> 기관별 인력 현황</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>기관명</th>
+                        <th>총원</th>
+                        <th>활성</th>
+                        <th>비활성</th>
+                        <th>활성비율</th>
+                        <th>상태</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>제일엔지니어링종합건축사사무소</strong></td>
+                        <td>26명</td>
+                        <td>9명</td>
+                        <td>17명</td>
+                        <td>34.6%</td>
+                        <td><span class="badge active">주관기관</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>충남연구원</strong></td>
+                        <td>6명</td>
+                        <td>5명</td>
+                        <td>1명</td>
+                        <td>83.3%</td>
+                        <td><span class="badge active">활성</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>한국과학기술원 (KAIST)</strong></td>
+                        <td>6명</td>
+                        <td>3명</td>
+                        <td>3명</td>
+                        <td>50.0%</td>
+                        <td><span class="badge active">활성</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>호서대학교 산학협력단</strong></td>
+                        <td>16명</td>
+                        <td>8명</td>
+                        <td>8명</td>
+                        <td>50.0%</td>
+                        <td><span class="badge active">활성</span></td>
+                    </tr>
+                    <tr style="background: rgba(0, 212, 255, 0.1);">
+                        <td><strong style="color: var(--primary);">합계</strong></td>
+                        <td><strong>54명</strong></td>
+                        <td><strong style="color: var(--success);">25명</strong></td>
+                        <td><strong>29명</strong></td>
+                        <td><strong>46.3%</strong></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Roles Section -->
+        <section class="roles-section">
+            <div class="section-title"><i class="ri-user-settings-fill"></i> 참여인력업무상세 (28개 역할)</div>
+            <div class="roles-grid">
+                <!-- 거버넌스 -->
+                <div class="role-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: rgba(123, 45, 255, 0.2); color: #7B2DFF;">
+                            <i class="ri-government-fill"></i>
+                        </div>
+                        <div class="category-name">거버넌스</div>
+                        <div class="category-count">3</div>
+                    </div>
+                    <ul class="role-list">
+                        <li class="role-item">
+                            <span class="role-name">사업책임자 <span class="role-eng">Project Director</span></span>
+                            <span class="role-person">이성호</span>
+                            <span class="role-rate">90%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">PM <span class="role-eng">Project Manager</span></span>
+                            <span class="role-person">이성호</span>
+                            <span class="role-rate">10%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">PMO <span class="role-eng">PMO Lead</span></span>
+                            <span class="role-person">임혁</span>
+                            <span class="role-rate">90%</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 기획/성과 -->
+                <div class="role-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: rgba(255, 217, 61, 0.2); color: #FFD93D;">
+                            <i class="ri-line-chart-fill"></i>
+                        </div>
+                        <div class="category-name">기획/성과</div>
+                        <div class="category-count">1</div>
+                    </div>
+                    <ul class="role-list">
+                        <li class="role-item">
+                            <span class="role-name">성과관리(KPI) <span class="role-eng">Performance Manager</span></span>
+                            <span class="role-person">함정영</span>
+                            <span class="role-rate">90%</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 기술 -->
+                <div class="role-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: rgba(0, 212, 255, 0.2); color: #00D4FF;">
+                            <i class="ri-code-s-slash-fill"></i>
+                        </div>
+                        <div class="category-name">기술</div>
+                        <div class="category-count">4</div>
+                    </div>
+                    <ul class="role-list">
+                        <li class="role-item">
+                            <span class="role-name">기술총괄 <span class="role-eng">Technical Lead</span></span>
+                            <span class="role-person">정지원</span>
+                            <span class="role-rate">90%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">아키텍트 <span class="role-eng">Solution Architect</span></span>
+                            <span class="role-person">강문석</span>
+                            <span class="role-rate">90%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">네트워크 <span class="role-eng">Network Engineer</span></span>
+                            <span class="role-person">박정민</span>
+                            <span class="role-rate">70%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">데이터엔지니어 <span class="role-eng">Data Engineer</span></span>
+                            <span class="role-person">안성순</span>
+                            <span class="role-rate">60%</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 개발 -->
+                <div class="role-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: rgba(255, 107, 53, 0.2); color: #FF6B35;">
+                            <i class="ri-terminal-box-fill"></i>
+                        </div>
+                        <div class="category-name">개발</div>
+                        <div class="category-count">2</div>
+                    </div>
+                    <ul class="role-list">
+                        <li class="role-item">
+                            <span class="role-name">백엔드 <span class="role-eng">Backend Lead</span></span>
+                            <span class="role-person">권주현</span>
+                            <span class="role-rate">70%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">프론트엔드 <span class="role-eng">Frontend Engineer</span></span>
+                            <span class="role-person">김동혁</span>
+                            <span class="role-rate" style="background: rgba(139, 156, 199, 0.2); color: var(--text-secondary);">종료</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 데이터 -->
+                <div class="role-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: rgba(0, 255, 136, 0.2); color: #00FF88;">
+                            <i class="ri-database-2-fill"></i>
+                        </div>
+                        <div class="category-name">데이터</div>
+                        <div class="category-count">2</div>
+                    </div>
+                    <ul class="role-list">
+                        <li class="role-item">
+                            <span class="role-name">데이터엔지니어 <span class="role-eng">Data Engineer</span></span>
+                            <span class="role-person">문상훈</span>
+                            <span class="role-rate">90%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">데이터분석/AI <span class="role-eng">ML Engineer</span></span>
+                            <span class="role-person">문현아</span>
+                            <span class="role-rate" style="background: rgba(139, 156, 199, 0.2); color: var(--text-secondary);">종료</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 인프라 -->
+                <div class="role-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: rgba(139, 156, 199, 0.2); color: #8B9CC7;">
+                            <i class="ri-server-fill"></i>
+                        </div>
+                        <div class="category-name">인프라</div>
+                        <div class="category-count">5</div>
+                    </div>
+                    <ul class="role-list">
+                        <li class="role-item">
+                            <span class="role-name">서버/클라우드 <span class="role-eng">Infra Engineer</span></span>
+                            <span class="role-person">이관주</span>
+                            <span class="role-rate" style="background: rgba(139, 156, 199, 0.2); color: var(--text-secondary);">종료</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">네트워크 <span class="role-eng">Network Engineer</span></span>
+                            <span class="role-person">이규진</span>
+                            <span class="role-rate">90%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">서버/클라우드 <span class="role-eng">Platform Architect</span></span>
+                            <span class="role-person">왕성환</span>
+                            <span class="role-rate">70%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">건축감리 <span class="role-eng">Construction CM</span></span>
+                            <span class="role-person">최규태</span>
+                            <span class="role-rate" style="background: rgba(139, 156, 199, 0.2); color: var(--text-secondary);">종료</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">건축설계 <span class="role-eng">Architectural Design</span></span>
+                            <span class="role-person">함정영</span>
+                            <span class="role-rate" style="background: rgba(139, 156, 199, 0.2); color: var(--text-secondary);">종료</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 보안 -->
+                <div class="role-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: rgba(255, 51, 102, 0.2); color: #FF3366;">
+                            <i class="ri-shield-check-fill"></i>
+                        </div>
+                        <div class="category-name">보안</div>
+                        <div class="category-count">2</div>
+                    </div>
+                    <ul class="role-list">
+                        <li class="role-item">
+                            <span class="role-name">정보보안 <span class="role-eng">Security Officer</span></span>
+                            <span class="role-person">이준옥</span>
+                            <span class="role-rate" style="background: rgba(139, 156, 199, 0.2); color: var(--text-secondary);">종료</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">개인정보보호 <span class="role-eng">Privacy Officer</span></span>
+                            <span class="role-person">전동욱</span>
+                            <span class="role-rate">10%</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 운영 -->
+                <div class="role-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: rgba(0, 212, 255, 0.2); color: #00D4FF;">
+                            <i class="ri-settings-3-fill"></i>
+                        </div>
+                        <div class="category-name">운영</div>
+                        <div class="category-count">2</div>
+                    </div>
+                    <ul class="role-list">
+                        <li class="role-item">
+                            <span class="role-name">운영전환 <span class="role-eng">Transition Manager</span></span>
+                            <span class="role-person">최규태</span>
+                            <span class="role-rate">100%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">운영(O&M) <span class="role-eng">Operations Manager</span></span>
+                            <span class="role-person">최성원</span>
+                            <span class="role-rate" style="background: rgba(139, 156, 199, 0.2); color: var(--text-secondary);">종료</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 행정/정산 -->
+                <div class="role-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: rgba(255, 217, 61, 0.2); color: #FFD93D;">
+                            <i class="ri-file-list-3-fill"></i>
+                        </div>
+                        <div class="category-name">행정/정산</div>
+                        <div class="category-count">4</div>
+                    </div>
+                    <ul class="role-list">
+                        <li class="role-item">
+                            <span class="role-name">계약·구매 <span class="role-eng">Contract Manager</span></span>
+                            <span class="role-person">이태복</span>
+                            <span class="role-rate">90%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">정산/사업비 <span class="role-eng">Financial Manager</span></span>
+                            <span class="role-person">김주용</span>
+                            <span class="role-rate">90%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">사업지원 <span class="role-eng">Grant Accounting</span></span>
+                            <span class="role-person">최철호</span>
+                            <span class="role-rate">90%</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">정산/사업비 <span class="role-eng">Financial Manager</span></span>
+                            <span class="role-person">양규빈</span>
+                            <span class="role-rate">90%</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 서비스/연계/품질 -->
+                <div class="role-category">
+                    <div class="category-header">
+                        <div class="category-icon" style="background: rgba(123, 45, 255, 0.2); color: #7B2DFF;">
+                            <i class="ri-stack-fill"></i>
+                        </div>
+                        <div class="category-name">서비스/연계/품질</div>
+                        <div class="category-count">3</div>
+                    </div>
+                    <ul class="role-list">
+                        <li class="role-item">
+                            <span class="role-name">서비스기획 <span class="role-eng">Product Owner</span></span>
+                            <span class="role-person">구본상</span>
+                            <span class="role-rate" style="background: rgba(139, 156, 199, 0.2); color: var(--text-secondary);">종료</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">연계 <span class="role-eng">Integration Engineer</span></span>
+                            <span class="role-person">김지웅</span>
+                            <span class="role-rate" style="background: rgba(139, 156, 199, 0.2); color: var(--text-secondary);">종료</span>
+                        </li>
+                        <li class="role-item">
+                            <span class="role-name">품질(QA) <span class="role-eng">QA Manager</span></span>
+                            <span class="role-person">정지운</span>
+                            <span class="role-rate" style="background: rgba(139, 156, 199, 0.2); color: var(--text-secondary);">종료</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Risk Section -->
+        <section class="roles-section">
+            <div class="section-title"><i class="ri-alarm-warning-fill"></i> 인력 운영 리스크 분석</div>
+            <div class="risk-section">
+                <div class="risk-card danger">
+                    <div class="risk-header">
+                        <i class="ri-error-warning-fill risk-icon"></i>
+                        <span class="risk-title">⚠️ 주의 필요</span>
+                    </div>
+                    <div class="risk-content">
+                        <strong>사업 종료에 따른 인력 정리 필요</strong><br>
+                        • 제일엔지니어링: 17명 비활성<br>
+                        • 저참여율 인력: 전동욱(10%)<br>
+                        → 사업 마무리 단계 인수인계 필요
+                    </div>
+                </div>
+                <div class="risk-card warning">
+                    <div class="risk-header">
+                        <i class="ri-eye-fill risk-icon"></i>
+                        <span class="risk-title">📌 모니터링 필요</span>
+                    </div>
+                    <div class="risk-content">
+                        <strong>복수 역할 수행 인력</strong><br>
+                        • 이성호: 책임자(90%) + PM(10%)<br>
+                        • 함정영: 성과관리 + 건축설계<br>
+                        • 최규태: 운영전환 + 건축감리<br>
+                        → 업무 과부하 모니터링
+                    </div>
+                </div>
+                <div class="risk-card success">
+                    <div class="risk-header">
+                        <i class="ri-checkbox-circle-fill risk-icon"></i>
+                        <span class="risk-title">✅ 긍정 요소</span>
+                    </div>
+                    <div class="risk-content">
+                        <strong>핵심 역할 안정적 유지</strong><br>
+                        • 거버넌스/기술/행정 핵심 인력 90%↑<br>
+                        • 2026-12-31까지 장기투입 9명 확보<br>
+                        → 프로젝트 마무리 안정성 확보
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>📊 아산시 강소형 스마트시티 구축사업 인력관리 대시보드</p>
+        <p>📅 2026-01-07 | ✍️ Claude AI 자동생성 | 📧 <a href="mailto:smartcity-pmo@cheileng.com">PMO 문의</a></p>
+        <p style="margin-top: 0.5rem;">
+            <a href="https://www.notion.so/2b850aa9577d8128ad35d86b79f67d12" target="_blank">
+                <i class="ri-notion-fill"></i> Notion 원본 보기
+            </a>
+        </p>
+    </footer>
+
+    <script>
+        // D-Day 계산
+        function updateDday() {
+            const endDate = new Date('2026-12-31');
+            const today = new Date();
+            const diff = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+            document.getElementById('dday').textContent = `D-${diff}`;
+        }
+        updateDday();
+
+        // 기관별 차트
+        const institutionCtx = document.getElementById('institutionChart').getContext('2d');
+        new Chart(institutionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['제일엔지니어링', '충남연구원', 'KAIST', '호서대학교'],
+                datasets: [{
+                    data: [26, 6, 6, 16],
+                    backgroundColor: ['#00D4FF', '#7B2DFF', '#FF6B35', '#00FF88'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { color: '#8B9CC7', font: { size: 12 } }
+                    }
+                }
+            }
+        });
+
+        // 분류별 역할 차트
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'bar',
+            data: {
+                labels: ['인프라', '기술', '행정/정산', '거버넌스', '개발', '데이터', '보안', '운영', '기타'],
+                datasets: [{
+                    label: '역할 수',
+                    data: [5, 4, 4, 3, 2, 2, 2, 2, 4],
+                    backgroundColor: [
+                        '#8B9CC7', '#00D4FF', '#FFD93D', '#7B2DFF', 
+                        '#FF6B35', '#00FF88', '#FF3366', '#00D4FF', '#7B2DFF'
+                    ],
+                    borderWidth: 0,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { color: '#1E2A45' },
+                        ticks: { color: '#8B9CC7' }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: '#8B9CC7' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
