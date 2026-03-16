@@ -2,8 +2,8 @@ name: Sync HR Dashboard from Notion
 
 on:
   schedule:
-    - cron: '0 0 * * *'    # 매일 09:00 KST
-  workflow_dispatch:         # 수동 실행
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
