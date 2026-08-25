@@ -1,0 +1,46 @@
+name: build-hr-json
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'index.html'
+      - 'tools/build-hr-json.js'
+  schedule:
+    - cron: '0 21 * * *'      # 매일 06:00 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate data/hr.json
+        run: node tools/build-hr-json.js index.html data/hr.json
+
+      - name: Validate output
+        run: |
+          node -e "
+            const j = require('./data/hr.json');
+            if (!Array.isArray(j.orgs) || j.orgs.length === 0) throw new Error('orgs 비어 있음');
+            if (!j.total) throw new Error('total 값 없음');
+            const roster = j.orgs.reduce((a,o)=>a+(o.members||[]).length,0);
+            if (roster === 0) throw new Error('참여인력 명부 파싱 실패 — HTML 구조 변경 여부 확인');
+            console.log('검증 통과 : 기관 '+j.orgs.length+' / 등록 '+j.total+'명 / 명부 '+roster+'행');
+          "
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "asan-smartcity-bot"
+          git config user.email "actions@github.com"
+          git add data/hr.json
+          git diff --staged --quiet || git commit -m "chore(data): hr.json 자동 갱신 [skip ci]"
+          git push
