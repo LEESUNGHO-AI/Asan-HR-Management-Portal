@@ -1,1 +1,605 @@
-
+{
+  "meta": {
+    "project": "아산시 강소형 스마트시티 조성사업",
+    "source": "Asan-HR-Management-Portal",
+    "schema": "hr.v1",
+    "data_base": "2026-01",
+    "generated_at": "2026-08-25T04:02:10.944Z",
+    "updated_at": "2026-08-25",
+    "note": "인건비 정산은 실지급액 × 참여기간 × 참여율 기준. ratio는 협약상 참여율(%)"
+  },
+  "total": 59,
+  "active": 21,
+  "ended": 38,
+  "rate": 35.6,
+  "headcount": 56,
+  "orgs": [
+    {
+      "org": "제일엔지니어링종합건축사사무소",
+      "total": 28,
+      "active": 10,
+      "ended": 18,
+      "rate": 35.7,
+      "role": "직접보조사업자(수행기관·총괄 PMO)",
+      "members": [
+        {
+          "name": "이성호",
+          "position": "상무",
+          "role": "사업책임자",
+          "ratio": 90,
+          "from": "2023-12-11",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "이성호",
+          "position": "상무",
+          "role": "PM(프로젝트 관리자)",
+          "ratio": 10,
+          "from": "2023-12-11",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "임혁",
+          "position": "이사",
+          "role": "PMO(사업관리)",
+          "ratio": 90,
+          "from": "2023-12-11",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "함정영",
+          "position": "부장",
+          "role": "성과관리(KPI)",
+          "ratio": 90,
+          "from": "2024-02-13",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "정지원",
+          "position": "상무",
+          "role": "기술총괄",
+          "ratio": 90,
+          "from": "2023-12-11",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "강문석",
+          "position": "차장",
+          "role": "솔루션/플랫폼 아키텍트",
+          "ratio": 90,
+          "from": "2023-12-11",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "문상훈",
+          "position": "대리",
+          "role": "데이터 엔지니어",
+          "ratio": 90,
+          "from": "2024-03-25",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "김주용",
+          "position": "부장",
+          "role": "정산/사업비",
+          "ratio": 90,
+          "from": "2023-12-11",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "최철호",
+          "position": "이사",
+          "role": "사업지원",
+          "ratio": 90,
+          "from": "2023-12-11",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "양규빈",
+          "position": "대리",
+          "role": "정산/사업비",
+          "ratio": 90,
+          "from": "2023-12-11",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "구본상",
+          "position": "부장",
+          "role": "서비스 기획(PO/BA)",
+          "ratio": 80,
+          "from": "2023-12-11",
+          "to": "2024-01-31",
+          "status": "종료"
+        },
+        {
+          "name": "권주현",
+          "position": "이사",
+          "role": "백엔드 개발",
+          "ratio": 70,
+          "from": "2023-12-11",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "김동혁",
+          "position": "부장",
+          "role": "프론트엔드/앱 개발",
+          "ratio": 40,
+          "from": "2023-12-11",
+          "to": "2024-01-31",
+          "status": "종료"
+        },
+        {
+          "name": "김지웅",
+          "position": "상무",
+          "role": "연계(Integration)",
+          "ratio": 90,
+          "from": "2024-07-01",
+          "to": "2024-10-31",
+          "status": "종료"
+        },
+        {
+          "name": "문현아",
+          "position": "대리",
+          "role": "데이터 분석/AI",
+          "ratio": 80,
+          "from": "2023-12-11",
+          "to": "2024-10-31",
+          "status": "종료"
+        },
+        {
+          "name": "이관주",
+          "position": "차장",
+          "role": "인프라(서버/클라우드)",
+          "ratio": 80,
+          "from": "2023-12-11",
+          "to": "2024-10-31",
+          "status": "종료"
+        },
+        {
+          "name": "이규진",
+          "position": "사원",
+          "role": "네트워크",
+          "ratio": 90,
+          "from": "2024-04-15",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "이준옥",
+          "position": "과장",
+          "role": "정보보안",
+          "ratio": 100,
+          "from": "2023-12-11",
+          "to": "2024-02-29",
+          "status": "종료"
+        },
+        {
+          "name": "전동욱",
+          "position": "부사장",
+          "role": "개인정보보호",
+          "ratio": 10,
+          "from": "2023-12-11",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "정지운",
+          "position": "대리",
+          "role": "품질(QA)",
+          "ratio": 90,
+          "from": "2024-07-01",
+          "to": "2024-11-30",
+          "status": "종료"
+        },
+        {
+          "name": "최규태",
+          "position": "부사장",
+          "role": "운영전환",
+          "ratio": 100,
+          "from": "2023-12-11",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "최성원",
+          "position": "부장",
+          "role": "운영(O&M)",
+          "ratio": 10,
+          "from": "2023-12-11",
+          "to": "2024-01-31",
+          "status": "종료"
+        },
+        {
+          "name": "이태복",
+          "position": "차장",
+          "role": "계약·구매",
+          "ratio": 90,
+          "from": "2023-12-11",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "박정민",
+          "position": "부장",
+          "role": "네트워크",
+          "ratio": 70,
+          "from": "2023-12-11",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "안성순",
+          "position": "상무",
+          "role": "데이터 엔지니어",
+          "ratio": 60,
+          "from": "2024-12-01",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "왕성환",
+          "position": "상무",
+          "role": "인프라(서버/클라우드)",
+          "ratio": 70,
+          "from": "2023-12-11",
+          "to": "2025-12-10",
+          "status": "종료"
+        },
+        {
+          "name": "최규태",
+          "position": "부사장",
+          "role": "건축감리",
+          "ratio": 65,
+          "from": "2023-12-11",
+          "to": "2025-02-28",
+          "status": "종료"
+        },
+        {
+          "name": "함정영",
+          "position": "부장",
+          "role": "건축설계",
+          "ratio": 90,
+          "from": "2023-12-11",
+          "to": "2025-02-28",
+          "status": "종료"
+        }
+      ],
+      "headcount": 25,
+      "manRatio": 2105,
+      "activeHeadcount": 9,
+      "activeManRatio": 910
+    },
+    {
+      "org": "충남연구원",
+      "total": 8,
+      "active": 5,
+      "ended": 3,
+      "rate": 62.5,
+      "role": "간접보조사업자",
+      "members": [
+        {
+          "name": "김강현",
+          "position": "",
+          "role": "-",
+          "ratio": 34,
+          "from": "2024-01-01",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "홍은일",
+          "position": "",
+          "role": "-",
+          "ratio": 29,
+          "from": "2024-01-01",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "한석호",
+          "position": "",
+          "role": "-",
+          "ratio": 31,
+          "from": "2025-08-01",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "김용현",
+          "position": "",
+          "role": "-",
+          "ratio": 27,
+          "from": "2026-01-01",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "박경철",
+          "position": "",
+          "role": "-",
+          "ratio": 24,
+          "from": "2026-01-01",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "박춘섭",
+          "position": "",
+          "role": "-",
+          "ratio": 43,
+          "from": "2024-01-01",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "임준홍",
+          "position": "",
+          "role": "-",
+          "ratio": 24,
+          "from": "2024-01-01",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "최정현",
+          "position": "",
+          "role": "-",
+          "ratio": 30,
+          "from": "2025-01-01",
+          "to": "2025-07-31",
+          "status": "종료"
+        }
+      ],
+      "headcount": 8,
+      "manRatio": 242,
+      "activeHeadcount": 5,
+      "activeManRatio": 145
+    },
+    {
+      "org": "한국과학기술원 (KAIST)",
+      "total": 6,
+      "active": 2,
+      "ended": 4,
+      "rate": 33.3,
+      "role": "간접보조사업자",
+      "members": [
+        {
+          "name": "이영종",
+          "position": "",
+          "role": "-",
+          "ratio": 10,
+          "from": "2024-05-01",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "박건우",
+          "position": "",
+          "role": "-",
+          "ratio": 10,
+          "from": "2025-03-01",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "김대영",
+          "position": "",
+          "role": "-",
+          "ratio": 6,
+          "from": "2024-01-01",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "Tolcha Yalew Kidane",
+          "position": "",
+          "role": "-",
+          "ratio": 30,
+          "from": "2024-05-01",
+          "to": "2025-05-31",
+          "status": "종료"
+        },
+        {
+          "name": "황선영",
+          "position": "",
+          "role": "-",
+          "ratio": 30,
+          "from": "2024-05-01",
+          "to": "2025-07-31",
+          "status": "종료"
+        },
+        {
+          "name": "연분홍",
+          "position": "",
+          "role": "-",
+          "ratio": 80,
+          "from": "2025-08-01",
+          "to": "2025-12-31",
+          "status": "종료"
+        }
+      ],
+      "headcount": 6,
+      "manRatio": 166,
+      "activeHeadcount": 2,
+      "activeManRatio": 20
+    },
+    {
+      "org": "호서대학교 산학협력단",
+      "total": 17,
+      "active": 4,
+      "ended": 13,
+      "rate": 23.5,
+      "role": "간접보조사업자",
+      "members": [
+        {
+          "name": "전유식",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2024-06-01",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "김기현",
+          "position": "",
+          "role": "-",
+          "ratio": 50,
+          "from": "2025-03-01",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "민혜홍",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2025-09-01",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "조유리",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2026-01-01",
+          "to": "2026-12-31",
+          "status": "활성"
+        },
+        {
+          "name": "신승중",
+          "position": "",
+          "role": "-",
+          "ratio": 50,
+          "from": "2024-01-01",
+          "to": "2025-02-28",
+          "status": "종료"
+        },
+        {
+          "name": "심민아",
+          "position": "",
+          "role": "-",
+          "ratio": 50,
+          "from": "2024-07-01",
+          "to": "2024-08-30",
+          "status": "종료"
+        },
+        {
+          "name": "김태군",
+          "position": "",
+          "role": "-",
+          "ratio": 50,
+          "from": "2024-03-01",
+          "to": "2024-08-30",
+          "status": "종료"
+        },
+        {
+          "name": "이창오",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2024-07-01",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "양소영",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2024-08-12",
+          "to": "2025-04-30",
+          "status": "종료"
+        },
+        {
+          "name": "심재훈",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2024-08-12",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "김종철",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2024-08-12",
+          "to": "2024-12-16",
+          "status": "종료"
+        },
+        {
+          "name": "차승용",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2024-08-12",
+          "to": "2024-10-11",
+          "status": "종료"
+        },
+        {
+          "name": "정화민",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2024-09-01",
+          "to": "2025-08-31",
+          "status": "종료"
+        },
+        {
+          "name": "이휘상",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2024-10-14",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "박성호",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2024-11-01",
+          "to": "2025-03-13",
+          "status": "종료"
+        },
+        {
+          "name": "김한솔",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2025-04-01",
+          "to": "2025-12-31",
+          "status": "종료"
+        },
+        {
+          "name": "김기강",
+          "position": "",
+          "role": "-",
+          "ratio": 100,
+          "from": "2025-04-28",
+          "to": "2025-12-31",
+          "status": "종료"
+        }
+      ],
+      "headcount": 17,
+      "manRatio": 1500,
+      "activeHeadcount": 4,
+      "activeManRatio": 350
+    }
+  ]
+}
