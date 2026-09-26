@@ -4,8 +4,8 @@
     "source": "Asan-HR-Management-Portal",
     "schema": "hr.v1",
     "data_base": "2026-01",
-    "generated_at": "2026-09-25T23:53:44.409Z",
-    "updated_at": "2026-09-25",
+    "generated_at": "2026-09-26T23:25:16.856Z",
+    "updated_at": "2026-09-26",
     "note": "인건비 정산은 실지급액 × 참여기간 × 참여율 기준. ratio는 협약상 참여율(%)"
   },
   "total": 59,
